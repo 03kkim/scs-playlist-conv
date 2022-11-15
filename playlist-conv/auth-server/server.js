@@ -4,9 +4,9 @@ let querystring = require('querystring')
 let cors = require('cors')
 let app = express() 
 
-let redirect_uri_login = 'http://localhost:8888/callback'
-let client_id = ''
-let client_secret = ''
+let redirect_uri_login = 'http://localhost:8888/spotify-callback'
+let client_id = 'd82c830182324e1e995a4203196c110b'
+let client_secret = 'd82c830182324e1e995a4203196c110b'
 
 app.use(cors())
 
@@ -39,10 +39,10 @@ app.get('/spotify-login', function(req, res) {
       json: true
     }
     request.post(authOptions, function(error, response, body) {
-      var access_token = body.access_token
-      let uri = process.env.FRONTEND_URI || 'http://localhost:3000/playlist'
+      // var access_token = body.access_token
+      // let uri = process.env.FRONTEND_URI || 'http://localhost:3000/playlist'
 
-      res.redirect(uri + '?access_token=' + access_token)
+      // res.redirect(uri + '?access_token=' + access_token)
     })
   })
 
