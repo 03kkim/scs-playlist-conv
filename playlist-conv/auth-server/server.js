@@ -10,7 +10,9 @@ let client_secret = ''
 
 app.use(cors())
 
-app.get('/login', function(req, res) {
+
+// spotify login
+app.get('/spotify-login', function(req, res) {
     res.redirect('https://accounts.spotify.com/authorize?' +
       querystring.stringify({
         response_type: 'code',
@@ -20,7 +22,7 @@ app.get('/login', function(req, res) {
       }))
   })
 
-  app.get('/callback', function(req, res) {
+  app.get('/spotify-callback', function(req, res) {
     let code = req.query.code || null
     let authOptions = {
       url: 'https://accounts.spotify.com/api/token',
@@ -43,5 +45,41 @@ app.get('/login', function(req, res) {
       res.redirect(uri + '?access_token=' + access_token)
     })
   })
+
+  
+
+app.get('/soundcloud-login', function(req, res) {
+    res.redirect('https://api.soundcloud.com/connect?' +
+      querystring.stringify({
+        response_type: 'code',
+        client_id: client_id,
+        redirect_uri: redirect_uri_login
+      }))
+  })
+
+app.get('/soundcloud-callback', function(req, res) {
+  let code = req.query.code || null
+  let authOptions = {
+    url: 'https://api.soundcloud.com/oauth2/token',
+    form: {
+      code: code,
+      redirect_uri: redirect_uri_login,
+      grant_type: 'authorization_code',
+      client_id: client_id,
+      client_secret: client_secret,
+    },
+    headers: {
+      'accept': 'application/json; charset=utf-8',
+      'Content-Type': 'application/x-www-form-urlencoded',
+    },
+    json: true
+  }
+  request.post(authOptions, function(error, response, body) {
+    var access_token = body.access_token
+    let uri = process.env.FRONTEND_URI || 'http://localhost:3000/playlist'
+
+    res.redirect(uri + '?access_token=' + access_token)
+  })
+})
 
   
