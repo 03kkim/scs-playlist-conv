@@ -1,78 +1,23 @@
-import logo from './logo.svg';
-import './App.css';
-import axios from 'axios'
+import React from 'react';
 
-// const axios = require('axios');
-const qs = require('qs');
-require('dotenv').config();
+import Home from './pages/Home';
+import Playlist from './pages/Playlists/Playlist';
+import Results from './pages/Result/result'
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom'
 
-const client_id = process.env.SPOTIFY_API_ID; // Your client id
-console.log(client_id);
-const client_secret = process.env.SPOTIFY_CLIENT_SECRET; // Your secret
-const auth_token = Buffer.from(`${client_id}:${client_secret}`, 'utf-8').toString('base64');
-
-const getAuth = async () => {
-  try{
-    //make post request to SPOTIFY API for access token, sending relavent info
-    const token_url = 'https://accounts.spotify.com/api/token';
-    const data = qs.stringify({'grant_type':'client_credentials'});
-
-    const response = await axios.post(token_url, data, {
-      headers: { 
-        'Authorization': `Basic ${auth_token}`,
-        'Content-Type': 'application/x-www-form-urlencoded' 
-      }
-    })
-    //return access token
-    return response.data.access_token;
-    //console.log(response.data.access_token);   
-  }catch(error){
-    //on fail, log the error in console
-    console.log(error);
+class App extends React.Component {
+  render() {
+    return (
+      <main>
+        <Router>
+          <Switch>
+            <Route path="/" exact component={Home} />
+            <Route path="/playlist" exact component={Playlist} />
+            <Route path="/result" exact component={Results} />
+          </Switch>
+        </Router>
+      </main>)
   }
-}
-
-const getAudioFeatures_Track = async (track_id) => {
-  //request token using getAuth() function
-  const access_token = await getAuth();
-  //console.log(access_token);
-
-  const api_url = `https://api.spotify.com/v1/audio-features/${track_id}`;
-  //console.log(api_url);
-  try{
-    const response = await axios.get(api_url, {
-      headers: {
-        'Authorization': `Bearer ${access_token}`
-      }
-    });
-    //console.log(response.data);
-    return response.data;
-  }catch(error){
-    console.log(error);
-  }  
-};
-
-console.log(getAudioFeatures_Track('07A0whlnYwfWfLQy4qh3Tq'));
-
-function App() {
-  return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
-  );
 }
 
 export default App;
